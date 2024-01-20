@@ -1,0 +1,12 @@
+# Virtual Envirement Folder
+venv
+venv/*
+
+# HIDE env file
+.env
+
+#Hide vs and vs-code folders
+.vs
+.vs/*
+.vscode
+.vscode/*
