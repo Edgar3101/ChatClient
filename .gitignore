@@ -10,3 +10,7 @@ venv/*
 .vs/*
 .vscode
 .vscode/*
+
+# Hide pyc
+*.pyc
+__py__cache

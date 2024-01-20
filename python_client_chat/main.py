@@ -1,26 +1,22 @@
-from .greeting import Greeting
-from .credentials_manager import CredentialsManager
-from .request_library import ConcreteRequestImplementation
-from .auth_manager import AuthManager
-import os
-from dotenv import load_dotenv
+from greeting import Greeting
+from credentials_manager import CredentialsManager
+from request_library import ConcreteRequestImplementation
+from auth_manager import AuthManager
 
-# Load environment variables from .env file
-load_dotenv()
 
 class Main:
     """
     Facade pattern implementation for simplified API interaction.
     """
 
-    def __init__(self):
+    def __init__(self, API_ENDPOINT: str):
         """
         Initialize all necessary classes.
         """
         self.greeting = Greeting()
         self.credentials_manager = CredentialsManager()
         self.request_manager = ConcreteRequestImplementation()
-        self.endpoint = os.getenv("API_ENDPOINT")
+        self.endpoint = API_ENDPOINT
         self.auth_token = ""
 
     def main(self):
