@@ -1,22 +1,32 @@
 from greeting import Greeting
 from credentials_manager import CredentialsManager
-from request_library import ConcreteRequestImplementation
+from request_library import ConcreteRequestImplementation, ConcreteUrlLibImplementation
 from auth_manager import AuthManager
 
 
-class Main:
+class AuthFacade:
     """
     Facade pattern implementation for simplified API interaction.
     """
 
-    def __init__(self, API_ENDPOINT: str):
+    def __init__(self, api_endpoint: str, concrete_request_manager: str = "requests"):
         """
         Initialize all necessary classes.
+
+        :param api_endpoint: The API end_point where we're going to manage request ops
+        :param concrete_request_manager: The interface to manage request. If "requests" is passed we'll use requests \
+        and if "urllib" is passed we'll use urllib
         """
         self.greeting = Greeting()
         self.credentials_manager = CredentialsManager()
-        self.request_manager = ConcreteRequestImplementation()
-        self.endpoint = API_ENDPOINT
+
+        # We choose our manager request for further operations
+        if concrete_request_manager == "requests":
+            self.request_manager = ConcreteRequestImplementation()
+        if concrete_request_manager == "urllib":
+            self.request_manager = ConcreteUrlLibImplementation()
+
+        self.endpoint = api_endpoint
         self.auth_token = ""
 
     def main(self):
@@ -35,27 +45,18 @@ class Main:
         # Initialize the AuthManager with the user's email, password, and request manager
         auth = AuthManager(email, password, request=self.request_manager, endpoint=self.endpoint)
 
-        # Configure the request manager with the API endpoint and headers
-        self.request_manager.configure_request(
-            self.endpoint,
-            headers={"x-token": 'x-client'}
-        )
+        response = None
 
         # Authenticate the user and get the auth token
         if option == "Login":
-            self.auth_token = auth.login()
+            response = auth.login()
 
         # Create a new account and get the auth token
         elif option == "Create Account":
-            self.auth_token = auth.create_account()
+            response = auth.create_account()
 
-        # Here you can use the auth_token for further API requests
+        # Even if the responde is None Or false, it's means authentitation is failed
+        if not response.get("isAuth"):
+            raise Exception("Lo siento, no pudimos autenticarte correctamente")
 
-    
-
-
-        
-        
-
-
-
+        self.auth_token = response.get("token")

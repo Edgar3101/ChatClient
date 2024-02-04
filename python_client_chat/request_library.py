@@ -5,6 +5,7 @@ import requests
 import urllib
 import json
 
+
 class AbstractRequest(ABC):
     """Abstract class for defining a request.
 
@@ -26,7 +27,7 @@ class AbstractRequest(ABC):
         self.url = url
 
     @abstractmethod
-    def make_request(self, method:str, data: dict | None) -> dict | str:
+    def make_request(self, method: str, data: dict | None) -> dict | str:
         """Make an HTTP request.
 
         :param method: The HTTP method to use (GET, POST, etc.).
@@ -39,7 +40,7 @@ class AbstractRequest(ABC):
 class ConcreteRequestImplementation(AbstractRequest):
     """Concrete implementation of the AbstractRequest class, using request library"""
 
-    def make_request(self, method : str, data: dict|None) -> any:
+    def make_request(self, method: str, data: dict | None) -> dict:
         """Make an HTTP request using the 'requests' library.
 
         :param method: The HTTP method to use (GET, POST, etc.).
@@ -49,7 +50,7 @@ class ConcreteRequestImplementation(AbstractRequest):
         if method.upper() == "GET":
             response = requests.get(url=self.url, headers=self.headers)
             return response.json()
-        
+
         if method.upper() == "POST":
             response = requests.post(url=self.url, headers=self.headers, data=data)
             return response.json()
@@ -58,7 +59,7 @@ class ConcreteRequestImplementation(AbstractRequest):
 class ConcreteUrlLibImplementation(AbstractRequest):
     """Concrete implementation of the AbstractRequest class, using urlLib librarys"""
 
-    def make_request(self, method : str, data: dict|None):
+    def make_request(self, method: str, data: dict | None) -> dict:
         """Make an HTTP request using the 'urllib' library.
 
         :param method: The HTTP method to use (GET, POST, etc.).
@@ -69,11 +70,8 @@ class ConcreteUrlLibImplementation(AbstractRequest):
             data = json.dumps(data)
             req = urllib.request.Request(self.url, data, self.headers)
 
-        if method.upper() ==  "GET":
+        if method.upper() == "GET":
             req = urllib.request.Request(url=self.url, headers=self.headers)
-            
+
         with urllib.request.urlopen(req) as response:
-            return json.loads(response.read().decode())  
-
-
-
+            return json.loads(response.read().decode())
